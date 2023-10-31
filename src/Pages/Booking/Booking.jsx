@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useContext } from "react";
@@ -11,9 +12,14 @@ const Booking = () => {
     const [booking, setBooking] = useState([])
     const url = `http://localhost:5001/bookings?email=${user?.email}`
     useEffect(() => {
-        fetch(url)
-            .then(res => res.json())
-            .then(data => setBooking(data))
+        axios.get(url, {withCredentials:true})
+        .then(res =>{
+            setBooking(res.data);
+        })
+        // fetch(url)
+        //     .then(res => res.json())
+        //     .then(data => setBooking(data))
+
     }, [url])
 
 

@@ -1,23 +1,41 @@
+/* eslint-disable no-unused-vars */
+import axios from 'axios';
 import { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import loginPhoto from '../../../public/assets/images/login/login.svg';
 import { AuthContext } from '../../Provider/AuthProvider';
 const Login = () => {
-    const {signIn} = useContext(AuthContext)
+
+    const { signIn } = useContext(AuthContext)
+    const location = useLocation()
+    // console.log(location)
+    const navigate = useNavigate()
     const handleLogin = event => {
 
         event.preventDefault()
         const form = new FormData(event.currentTarget)
         const email = form.get('email')
         const password = form.get('password')
-        // console.log(email, password)
-        signIn(email,password) 
-        .then(result =>{
-            console.log(result.user)
-        })
-        .catch(error =>{
-            console.error(error)
-        })
+        // console.log(email, password);
+
+        signIn(email, password)
+            .then(result => {
+                const loggedInUser = result.user
+                console.log(loggedInUser)
+                const user = { email }
+                // get access toekn
+                axios.post('http://localhost:5001/jwt', user, { withCredentials: true })
+                    .then(res => {
+                        console.log(res.data)
+                        if (res.data.success) {
+                            navigate(location?.state ? location?.state : '/')
+                        }
+                    })
+
+            })
+            .catch(error => {
+                console.error(error)
+            })
     }
     return (
         <div className="hero min-h-screen bg-base-200">
